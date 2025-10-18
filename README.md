@@ -1,88 +1,29 @@
-# 🌦️ Weather Data Time Series Forecasting
+# Hourly Temperature Forecasting at RDU Airport
 
-This project performs a complete **time series analysis and forecasting** of hourly temperature data from the RDU weather station. It walks through data cleaning, feature engineering, seasonal decomposition, and predictive modeling using both **Linear Regression** and **Random Forest Regressor**.
+This project builds and evaluates machine learning models to predict hourly temperature at Raleigh-Durham (RDU) airport for the period September 17, 2025 – September 30, 2025. The notebook demonstrates a complete workflow from data preprocessing to feature engineering, model training, and evaluation.
 
----
+The goal of this project is to forecast hourly temperature (`tmpf`) at RDU Airport using historical weather data. The dataset `data/RDU.csv` contains timestamped weather observations. Forecasting is performed for the window 2025-09-17 00:00 to 2025-09-30 23:00. Two models are implemented: Linear Regression and Random Forest Regressor. The models are evaluated using RMSE (Root Mean Squared Error), MAE (Mean Absolute Error), and MSE (Mean Squared Error).
 
-## 📘 Overview
-The goal is to model and forecast hourly temperature (`tmpf`) using decades of historical data from RDU (Raleigh–Durham Airport).  
-The workflow includes:
-- Parsing and preprocessing raw weather logs  
-- Handling missing values and duplicate timestamps  
-- Creating an hourly continuous series  
-- Exploring seasonality and trends  
-- Building autoregressive forecasting models  
+The repository contains `project.ipynb` which holds the notebook with preprocessing, feature engineering, modeling, and evaluation; `data/RDU.csv` which is the input dataset of hourly weather at RDU Airport; and `requirements.txt` listing dependencies.
 
----
+To set up, clone the repository with  
+git clone https://github.com/yourusername/rdu-forecasting.git  
+cd rdu-forecasting  
 
-## ⚙️ Project Pipeline
+Then create a virtual environment and install dependencies with  
+python -m venv venv  
+source venv/bin/activate   (or venv\Scripts\activate on Windows)  
+pip install -r requirements.txt  
 
-### 1. Data Preparation
-- Load and inspect the dataset (`data/RDU.csv`) using **Pandas** and **NumPy**.  
-- Convert timestamps (`valid`) to `datetime`, extract time features (day, month, hour, weekday).  
-- Convert temperature and other numeric fields using coercion (`pd.to_numeric(errors='coerce')`).  
-- Identify and merge duplicate timestamps by averaging numeric values.  
+Run the notebook with  
+jupyter notebook project.ipynb  
 
-### 2. Data Cleaning
-- One-hot encode categorical features (`skyc`, `wxcodes`) for machine learning compatibility.  
-- Resample data to a strict hourly grid.  
-- Interpolate missing values for short gaps (≤ 3 hours) using **time-based interpolation** while keeping longer gaps as NaN.  
-- Produce a fully continuous hourly temperature dataset covering multiple decades.  
+Data preprocessing included converting timestamps to datetime format, reindexing minute-level readings into hourly means, and filling missing values for continuity in the time series. Feature engineering added time-based features such as hour of day and day of week, lag features for temperature (1, 24, 48, and 72 hours ago), and rolling statistics like the 24-hour moving mean and standard deviation. Modeling involved two approaches: a Linear Regression baseline and a Random Forest Regressor with tuned hyperparameters. Evaluation compared both models on RMSE, MAE, and MSE, along with visualizations of predicted versus actual hourly temperatures.
 
-### 3. Exploratory Analysis
-- Apply **rolling mean smoothing** to visualize temperature trends and reduce noise.  
-- Perform **seasonal decomposition** using `statsmodels` to identify daily, weekly, and annual cycles.  
-- Visualize long-term variability and trend consistency.  
+Linear Regression achieved MAE = 5.818, RMSE = 7.349, and MSE = 54.009. Random Forest achieved MAE = 5.665, RMSE = 7.060, and MSE = 49.845. Random Forest outperformed Linear Regression across all metrics, showing better ability to capture variability in temperature patterns. Forecast plots demonstrate that the Random Forest predictions align more closely with observed values over the forecast horizon.
 
-### 4. Feature Engineering
-- Create autoregressive lag features:  
-  - `lag1`: previous hour temperature  
-  - `lag24`: same hour previous day  
-- Add rolling features like `rolling24` (24-hour moving average).  
-- Include cyclical time features (`hour`, `month`) to encode seasonality.  
-- Drop rows with missing lag values to maintain data integrity.  
+Future extensions include incorporating additional exogenous variables such as humidity, windspeed, and pressure to enrich the feature set, experimenting with deep learning models like LSTMs or Transformers for sequence forecasting, and deploying the solution as a lightweight web app or API for real-time temperature predictions.
 
-### 5. Predictive Modeling
-- **Linear Regression**:  
-  - Train on engineered features (`lag1`, `lag24`, `rolling24`, `hour`, `month`).  
-  - Achieved **Train R² = 0.981**, **Test MAE = 9.50°F**, **Test MSE = 130.99**.  
-- **Random Forest Regressor**:  
-  - 200 trees, maximum depth of 20, trained with all CPU cores.  
-  - Achieved **Train R² = 0.996**, **Test MAE = 4.40°F**, **Test MSE = 30.59**.  
-- Both models used an **autoregressive loop**, updating forecasts sequentially for each hour in the test window (September 17–30, 2025).  
+Requirements include Python 3.9+, pandas, numpy, matplotlib, scikit-learn, and jupyter. These can be installed via pip install -r requirements.txt.
 
-### 6. Evaluation
-- Evaluation metrics computed using **scikit-learn**:
-  - `mean_absolute_error` (MAE)  
-  - `mean_squared_error` (MSE)  
-- Random Forest significantly outperformed Linear Regression in predictive accuracy and stability.  
-
----
-
-## 📊 Key Insights
-- Temperature patterns show strong **daily and seasonal periodicity**.  
-- Careful handling of missing and duplicate timestamps is critical for accurate modeling.  
-- Time-based interpolation and lagged features improve continuity and predictive power.  
-- Nonlinear ensemble methods (like Random Forests) capture weather variability better than linear models.  
-
----
-
-## 🧩 Tools and Libraries
-- **Python 3.10+**  
-- **Pandas**, **NumPy**, **Matplotlib**, **Statsmodels**, **Scikit-learn**  
-
----
-
-## 📈 Results Summary
-| Model | Train R² | Test MAE (°F) | Test MSE |
-|--------|-----------|----------------|-----------|
-| Linear Regression | 0.981 | 9.50 | 130.99 |
-| Random Forest | 0.996 | 4.40 | 30.59 |
-
-Random Forest provided more accurate and stable forecasts, making it better suited for long-range temperature prediction tasks.
-
----
-
-## 🧠 Summary
-This project demonstrates an end-to-end **time series forecasting pipeline**—from raw data ingestion and cleaning to feature engineering, modeling, and evaluation.  
-It highlights best practices for working with noisy meteorological data, handling missingness, and building reliable forecasting systems for real-world use.
+Dataset source: RDU airport weather data (course dataset). Developed as part of coursework on time series forecasting.
