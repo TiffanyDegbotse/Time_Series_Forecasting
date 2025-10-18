@@ -55,6 +55,3 @@ Install all dependencies via:
 ```bash
 pip install -r requirements.txt
 ```
-
-## Acknowledgments
-Dataset source: RDU Airport weather data (course dataset). Developed as part of coursework on time series forecasting.
