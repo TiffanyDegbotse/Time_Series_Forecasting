@@ -7,8 +7,8 @@ The goal of this project is to forecast hourly temperature (`tmpf`) at RDU Airpo
 The repository contains `project.ipynb` which holds the notebook with preprocessing, feature engineering, modeling, and evaluation; `data/RDU.csv` which is the input dataset of hourly weather at RDU Airport; and `requirements.txt` listing dependencies.
 
 To set up, clone the repository with  
-git clone https://github.com/yourusername/rdu-forecasting.git  
-cd rdu-forecasting  
+git clone https://github.com/TiffanyDegbotse/Time_Series_Forecasting.git
+cd Time_Series_Forecasting
 
 Then create a virtual environment and install dependencies with  
 python -m venv venv  
